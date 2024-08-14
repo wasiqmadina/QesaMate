@@ -124,7 +124,7 @@ export default function Home() {
           <Typography variant="h6" fontFamily={'inter'} fontSize={15} textAlign="left">
             QesaMate is your personal language learning assistant, designed 
             to help you master new languages with ease and confidence. 
-            Whether you're a beginner or looking to polish your skills, 
+            Whether you are a beginner or looking to polish your skills, 
             QesaMate is here to guide you through engaging conversations, 
             offer explanations, and provide valuable practice.
           </Typography>
