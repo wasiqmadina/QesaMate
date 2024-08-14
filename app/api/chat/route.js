@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 const APIKEY = process.env.GEMINI_API_KEY;
 
-
 const systemPrompt = `System Prompt for Language Learning Assistant
 
 You are an AI assistant designed to help people learn different languages. Your goal is to provide helpful, clear, and accurate language learning guidance. You should offer explanations, translations, and conversational practice that suit the learner's proficiency level.

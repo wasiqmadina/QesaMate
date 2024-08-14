@@ -9,22 +9,23 @@ export default function Home() {
     {
       role: 'assistant',
       content: "Hi! I'm your Qesa (Chat) Mate. How can I help you today?",
-    }, 
+    },
   ])
   const [message, setMessage] = useState('') // the user input for the chatbot
   const [isLoading, setIsLoading] = useState(false)
+  const [showChatbot, setShowChatbot] = useState(false) // state to toggle chatbot visibility
 
   const sendMessage = async () => {
-    if (!message.trim() || isLoading) return;
+    if (!message.trim() || isLoading) return
     setIsLoading(true)
-  
+
     setMessage('')
     setMessages((messages) => [
       ...messages,
       { role: 'user', content: message },
       { role: 'assistant', content: '' },
     ])
-  
+
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -33,14 +34,14 @@ export default function Home() {
         },
         body: JSON.stringify([...messages, { role: 'user', content: message }]),
       })
-  
+
       if (!response.ok) {
         throw new Error('Network response was not ok')
       }
-  
+
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
-  
+
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
@@ -75,16 +76,34 @@ export default function Home() {
   return (
     <Box 
       display="flex"
+      flexDirection="column"
       height="100vh"
       width="100vw"
       overflow="hidden"
+      bgcolor={'#F4EEFF'}
     >
+      {/* Top Banner */}
+      <Box 
+        width="100%"
+        padding={2}
+        bgcolor="#424874"
+        color="white"
+        textAlign="center"
+        boxShadow="0px 2px 4px rgba(0, 0, 0, 0.1)" 
+      >
+        <Typography variant="h4">
+          QesaMate
+        </Typography>
+      </Box>
+
+      {/* Main Content */}
       <Box 
         display="flex"
         flexDirection="row"
         width="100%"
         maxWidth="1200px"
-        margin="auto"
+        marginLeft={5}
+        marginTop={2} // Add margin to separate the banner from the content
       >
         {/* Left Side: Description and Image */}
         <Box 
@@ -92,50 +111,59 @@ export default function Home() {
           flexDirection="column"
           width="50%"
           padding={2}
-          justifyContent="center"
           alignItems="flex-start"
           gap={2}
-          paddingLeft="10px"
-          style={{ marginLeft: '-20px' }}
+          marginLeft="10%"
         >
           <Image 
-            src="/assets/chatbot.gif" 
+            src="/assets/anim.gif" 
             alt="Chatbot" 
-            width={650} 
-            height={530} 
+            width={620} 
+            height={630} 
           />
-          <Typography variant="h6" fontFamily={'inter'} textAlign="left">
-          QesaMate is your personal language learning assistant, designed 
-          to help you master new languages with ease and confidence. 
-          Whether you're a beginner or looking to polish your skills, 
-          QesaMate is here to guide you through engaging conversations, 
-          offer explanations, and provide valuable practice.
+          <Typography variant="h6" fontFamily={'inter'} fontSize={15} textAlign="left">
+            QesaMate is your personal language learning assistant, designed 
+            to help you master new languages with ease and confidence. 
+            Whether you're a beginner or looking to polish your skills, 
+            QesaMate is here to guide you through engaging conversations, 
+            offer explanations, and provide valuable practice.
           </Typography>
+          <Button
+            variant="contained"
+            onClick={() => setShowChatbot(!showChatbot)} // Toggle the chatbot visibility
+          >
+            {showChatbot ? 'Close Chat' : 'Lets Chat!'}
+          </Button>
         </Box>
 
-        {/* Right Side: Chatbot */}
+        {/* Right Side: Chatbot (conditionally rendered) */}
         <Box
-          display="flex"
-          flexDirection="column"
-          width="50%"
+          position="fixed"
+          top={0}
+          right={showChatbot ? 0 : '-100%'} // Move the chatbot offscreen initially
+          marginTop={10}
+          height="90%"
+          width={{ xs: '70%', sm: '50%', md: '35%', lg: '35%' }} // Responsive width
+          maxWidth="2000px" // Maximum width for larger screens
+          bgcolor="white"
+          boxShadow="-3px 0 5px rgba(0,0,0,0.2)"
+          zIndex={1000}
           padding={2}
-          borderLeft="1px solid #ddd"
+          transition="right 0.3s ease-in-out" // Slide-in animation
         >
           <Stack
             direction="column"
             width="100%"
             height="100%"
-            border="1px solid black"
-            p={2}
             spacing={3}
-            style={{ overflowY: 'auto' }}
           >
             <Stack
               direction="column"
-              spacing={2}
               flexGrow={1}
-              overflow="auto"
-              maxHeight="100%"
+              spacing={2}
+              overflow="auto" // Allow the chat messages to scroll if they overflow
+              maxHeight="calc(100vh - 100px)" // Reserve space for input and padding
+              paddingRight={2} // Add padding so the scrollbar doesn't overlap content
             >
               {messages.map((message, index) => (
                 <Box
@@ -148,19 +176,20 @@ export default function Home() {
                   <Box
                     bgcolor={
                       message.role === 'assistant'
-                        ? 'primary.main'
-                        : 'secondary.main'
+                        ? '#424874'
+                        : '#A6B1E1'
                     }
                     color="white"
-                    borderRadius={16}
-                    p={3}
+                    borderRadius={6}
+                    maxWidth="75%"
+                    p={2}
                   >
                     {message.content}
                   </Box>
                 </Box>
               ))}
             </Stack>
-            <Stack direction={'row'} spacing={2}>
+            <Stack direction={'row'} spacing={2} alignItems="center">
               <TextField
                 label="Message"
                 fullWidth
